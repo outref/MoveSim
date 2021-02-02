@@ -27,6 +27,31 @@ var availPosLeft = 0; // available positions for addElement()
 var availPosTop = 0;
 var availPosTopNext = 0;
 
+//Determining movement direction of user with keydown - keyup
+var upPressed = false; var downPressed = false; var leftPressed = false; var rightPressed = false;
+document.addEventListener("keydown", function(event) {
+  if (event.key === "ArrowUp") {
+    upPressed=true;
+  } else if (event.key === "ArrowDown") {
+    downPressed=true;
+  } else if (event.key === "ArrowLeft") {
+    leftPressed=true;
+  } else if (event.key === "ArrowRight") {
+    rightPressed=true;
+  };
+});
+document.addEventListener("keyup", function(event) {
+  if (event.key === "ArrowUp") {
+    upPressed=false;
+  } else if (event.key === "ArrowDown") {
+    downPressed=false;
+  } else if (event.key === "ArrowLeft") {
+    leftPressed=false;
+  } else if (event.key === "ArrowRight") {
+    rightPressed=false;
+  };
+});
+
 createBlocks();
 
 setInterval(allBlocksMovement, 20);
@@ -99,7 +124,7 @@ function createBlocks() {
 		blocks[i].blockStepsMin = ((Number(roomWidth)+Number(roomHeight))/2)/blocks[i].blockStep/min; // minimal part of the room in one direction -- average of room's width and height used, important for non-rectangular rooms
 		blocks[i].blockStepsMax = ((Number(roomWidth)+Number(roomHeight))/2)/blocks[i].blockStep/max; // maximal part of the room in one direction
 
-		if (blocks[i].behavior==="physicalCons" || blocks[i].behavior==="physicalFade") { //not increasing j for physical objects(no random turns)
+		if (blocks[i].behavior==="physicalCons" || blocks[i].behavior==="physicalFade" || blocks[i].behavior==="player") { //not increasing j for physical objects(no random turns)
 			blocks[i].jBehavior = "off";
 		} else {blocks[i].jBehavior = "on";};
 
@@ -115,7 +140,23 @@ function allBlocksMovement(){
 
 	 	var block = document.getElementById("block" + i);
 
-		move();
+	 	if (blocks[i].behavior==="player") {//moving player
+	 		if (upPressed || downPressed || leftPressed || rightPressed) {
+	 			switch (true) {
+	 				case upPressed: blocks[i].randomDir=4; break;
+	 				case downPressed: blocks[i].randomDir=3; break;
+	 				case leftPressed: blocks[i].randomDir=2; break; 
+	 				case rightPressed: blocks[i].randomDir=1; break;
+	 			};
+	 			switch (true) {
+	 				case upPressed && leftPressed: blocks[i].randomDir=6; break;
+	 				case downPressed && leftPressed: blocks[i].randomDir=7; break;
+	 				case rightPressed && upPressed: blocks[i].randomDir=8; break; 
+	 				case rightPressed && downPressed: blocks[i].randomDir=5; break;
+	 			};
+	 			move();
+	 		};
+	 	} else {move();}; //moving everything else
 
 		position(i);
 
@@ -155,8 +196,6 @@ function allBlocksMovement(){
 	 		if (blocks[i].jBehavior === "off") {blocks[i].j=0}; //stopping j count for physical objects
 
 	 		if (blocks[i].behavior==="physicalFade") {blocks[i].blockStep=blocks[i].blockStep*0.997}; //fading speed
-
-	 		//if (blocks[i].behavior==="player")
 
 			position(i);
 

@@ -3,6 +3,11 @@ var rowAm; // items in one row
 var totalAm = 0; //total amount of items
 var largestBlockSize = 0;
 
+function pasteEmoji(emoji) { //regex pizdec
+	var str = emoji.source;
+	document.getElementById("emo" + (rowNum-1)).value = str.replace(/\//g, '');
+};
+
 function addItem() {
 	var div = document.createElement("div"); //addind rows for items
 	div.setAttribute("id","list" + rowNum);
