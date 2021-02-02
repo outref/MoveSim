@@ -1,2 +1,2 @@
 # moveSim
-https://outref.github.io/moveSim/
+https://outref.github.io/MoveSim/
